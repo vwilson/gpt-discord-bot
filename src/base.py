@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from typing import Optional, List
+from typing import Optional, List, Dict
+import json
 
 SEPARATOR_TOKEN = "<|endoftext|>"
 
@@ -28,6 +29,12 @@ class Conversation:
         return f"\n{SEPARATOR_TOKEN}".join(
             [message.render() for message in self.messages]
         )
+    
+    def render_messages(self) -> List[str]:
+        message_list = []
+        for message in self.messages:
+            message_list.append(message.user + ": " + (message.text or ""))
+        return message_list
 
 
 @dataclass(frozen=True)
@@ -51,3 +58,30 @@ class Prompt:
             + [Message("System", "Current conversation:").render()]
             + [self.convo.render()],
         )
+
+    def render_json(self):
+        messages = []
+
+        # Add the header message
+        messages.append({
+            "role": "system",
+            "content": self.header.render()
+        })
+
+        # Add example conversations
+        #messages.append({
+        #    "role": "system",
+        #    "content": "Example conversations:"
+        #})
+
+        #for conversation in self.examples:
+        #    messages.extend(conversation.render_messages())
+
+        # Add the current conversation
+        messages.append({
+            "role": "system",
+            "content": "Current conversation:" + "\n".join(self.convo.render_messages())
+        })
+
+        # Convert the messages list to a JSON-formatted string
+        return messages

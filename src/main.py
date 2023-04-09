@@ -44,8 +44,8 @@ async def on_ready():
     completion.MY_BOT_EXAMPLE_CONVOS = []
     for c in EXAMPLE_CONVOS:
         messages = []
-        for m in c.messages:
-            if m.user == "Lenard":
+        for m in c.messages: #todo: variable and pr
+            if m.user == "RaceGPT":
                 messages.append(Message(user=client.user.name, text=m.text))
             else:
                 messages.append(m)
