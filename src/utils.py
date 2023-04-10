@@ -9,8 +9,7 @@ from discord import Message as DiscordMessage
 from typing import Optional, List
 import discord
 
-from src.constants import MAX_CHARS_PER_REPLY_MSG, INACTIVATE_THREAD_PREFIX
-
+from src.constants import MAX_CHARS_PER_REPLY_MSG, INACTIVATE_THREAD_PREFIX, BOT_NAME
 
 def discord_message_to_message(message: DiscordMessage) -> Optional[Message]:
     if (
@@ -21,10 +20,18 @@ def discord_message_to_message(message: DiscordMessage) -> Optional[Message]:
     ):
         field = message.reference.cached_message.embeds[0].fields[0]
         if field.value:
-            return Message(user=field.name, text=field.value)
+            if field.value == BOT_NAME:
+                return Message(role="assistant", content=(field.value))
+            else: 
+                return Message(role="user", content=(field.name + ": " + field.value))
+            
     else:
         if message.content:
-            return Message(user=message.author.name, text=message.content)
+            if message.author.name == BOT_NAME:
+                return Message(role="assistant", content=message.content)
+            else:
+                return Message(role="user", content=message.author.display_name + ": " + message.content)
+
     return None
 
 
