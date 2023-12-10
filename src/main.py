@@ -215,6 +215,7 @@ async def on_message(message: DiscordMessage):
             # ignore this thread
             return
 
+        thread = await client.fetch_channel(thread.id)
         if thread.message_count > MAX_THREAD_MESSAGES:
             # too many messages, no longer going to reply
             await close_thread(thread=thread)
